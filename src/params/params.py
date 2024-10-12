@@ -1,3 +1,5 @@
+import sys
+
 from src.enums.adaptations import EAdaptations
 from src.enums.problems import EProblems
 import logging
@@ -16,6 +18,9 @@ LAYERS = 3  # DEF 3
 NEURONS = 15  # DEF 15
 LEARNING_RATE = 0.005  # DEF 0.005
 
+# Problem/adaptation specific values
+MAX_DEPTH = 10 # DEF 10, required for some of the adaptations
+EPSILON = 0.1 # DEF 0.1, required for the Advection Diffusion problem
 
 # RUN settings
 TOLERANCE = 1e-4  # DEF 1e-4, error tolerance
@@ -24,10 +29,14 @@ MAX_ITERS = 1000  # DEF 1000, maximum number of iterations for a run
 LOG_LEVEL = logging.DEBUG  # DEF logging.INFO
 
 
-# Problem/adaptation specific values
-MAX_DEPTH = 10 # DEF 10, required for some of the adaptations
-EPSILON = 0.1 # DEF 0.1, required for the Advection Diffusion problem
-
+logging.basicConfig(
+    level=LOG_LEVEL,
+    format='%(asctime)s[%(levelname)s] %(message)s',
+    datefmt='[%Y-%m-%d %H:%M:%S]',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 
 
 

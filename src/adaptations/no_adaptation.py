@@ -1,0 +1,13 @@
+from typing import Callable
+from src.helpers.adaptation_interface import AdaptationInterface
+import src.params.params as params
+
+import torch
+
+
+class NoAdaptation(AdaptationInterface):
+    def __init__(self, x_range, max_number_of_points):
+        pass
+
+    def refine(self, loss_function: Callable, points: torch.Tensor):
+        return points
