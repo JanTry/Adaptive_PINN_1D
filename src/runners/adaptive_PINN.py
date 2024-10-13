@@ -21,7 +21,7 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
     :param run_id: run identification number. Will overwrite any previous result with the same id and save path params
     :param problem_type: problem enum value. Based on that, a proper class from src/problems will be used
     :param adaptation_type: adaptation enum value. Based on that, a proper class from src/adaptations will be used
-    :param save_training_data: Either save the mid-run points and results or not (final results are always saved)
+    :param save_training_data: Either save the mid-run selected points or not (results for the run are always saved)
     :return:
     """
     logging.log(logging.DEBUG, f'Starting PINN training run {run_id} for: {problem_type.value}, {adaptation_type.value}')
@@ -34,12 +34,12 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
     # Starting with a set of equally distributed points (ban be changed to a set of randomly selected points)
     x = torch.linspace(x_range[0], x_range[1], steps=params.NUM_MAX_POINTS,
                        requires_grad=True, device=params.DEVICE).reshape(-1, 1)
-    # A set of base x points (for now just boundary located ones)
-    base_x = torch.linspace(x_range[0], x_range[1], steps=2, device=params.DEVICE)
+    # A set of base x points
+    base_x_mesh = torch.linspace(x_range[0], x_range[1], steps=params.NUM_BASE_MESH_POINTS, device=params.DEVICE)
     # A set of test points
     test_x = torch.linspace(x_range[0], x_range[1], steps=params.NUM_TEST_POINTS, device=params.DEVICE)
 
-    adaptation = adaptation_factory(adaptation=adaptation_type, base_points=base_x, x_range=x_range,
+    adaptation = adaptation_factory(adaptation=adaptation_type, base_points=base_x_mesh, x_range=x_range,
                                     max_number_of_points=params.NUM_MAX_POINTS)
 
     pinn = PINN(params.LAYERS, params.NEURONS, pinning=False).to(params.DEVICE)
@@ -58,8 +58,9 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
         stage_convergence_data = train_model(nn_approximator=pinn, loss_fn=loss_fn, device=params.DEVICE, learning_rate=params.LEARNING_RATE,
                                              max_epochs=params.NUMBER_EPOCHS, optimizer=optimizer)
 
+        convergence_data = torch.cat((convergence_data, stage_convergence_data.cpu()))
+
         if save_training_data:
-            convergence_data = torch.cat((convergence_data, stage_convergence_data.cpu()))
             y = f(pinn, x).detach().cpu()
             plain_x = x.detach().clone().cpu()
             point_data.append(torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2))
@@ -69,7 +70,7 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
         if exit_criterion(test_x, loss_fn, params.TOLERANCE):
             break
 
-        x = adaptation.refine(loss_function=loss_fn, points=x)
+        x = adaptation.refine(loss_function=loss_fn, old_x=x)
 
     end_time = time.time()
     exec_time = end_time - start_time
@@ -79,9 +80,12 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
                     f"The error tolerance has not been reached in {params.MAX_ITERS} iterations")
 
     logging.log(logging.INFO,
-                f'Mode: {adaptation_type}, Run: {run_id}, Finished in {n_iters+1} iterations, after {exec_time}s')
+                f'Adaptation: {adaptation_type.value}, Problem: {problem_type.value}, Run: {run_id}, '
+                f'Finished in {n_iters+1} iterations, after {exec_time}s')
 
-    base_path = os.path.join("results", params.PROBLEM, params.ADAPTATION,
+
+    # Saving results
+    base_path = os.path.join("results", problem_type.value, adaptation_type.value,
                         f'L{params.LAYERS}_N{params.NEURONS}_'
                         f'P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}',
                         f'LR{params.LEARNING_RATE}_TOL{params.TOLERANCE}')
@@ -94,9 +98,9 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
     torch.save(pinn, os.path.join(path, f'pinn.pt'))
     torch.save(n_iters, os.path.join(path, f'n_iters.pt'))
     torch.save(exec_time, os.path.join(path, f'exec_time.pt'))
+    torch.save(convergence_data.detach(), os.path.join(path, f'convergence.pt'))
 
     if save_training_data:
-        torch.save(convergence_data.detach(), os.path.join(path, f'convergence.pt'))
         torch.save(point_data, os.path.join(path, f'point_data.pt'))
 
     with open(os.path.join(path, f'result.txt'), "w") as file:
@@ -104,7 +108,7 @@ def train_PINN(run_id: int, problem_type:EProblems=params.PROBLEM,
         file.write(f"ADAPTATION = {adaptation_type.value}\n")
         file.write(f"RUN_ID = {run_id}\n")
         file.write(f"DEVICE = {params.DEVICE}\n")
-        file.write(f"NUM_BASE_POINTS = {params.NUM_BASE_POINTS}\n")
+        file.write(f"NUM_BASE_POINTS = {params.NUM_BASE_MESH_POINTS}\n")
         file.write(f"NUM_MAX_POINTS = {params.NUM_MAX_POINTS}\n")
         file.write(f"NUMBER_EPOCHS = {params.NUMBER_EPOCHS}\n")
         file.write(f"LEARNING_RATE = {params.LEARNING_RATE}\n")

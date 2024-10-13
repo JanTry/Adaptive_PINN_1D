@@ -10,5 +10,5 @@ class AdaptationInterface(ABC):
         pass
 
     @abstractmethod
-    def refine(self, loss_function: Callable, previous_points: torch.Tensor):
+    def refine(self, loss_function: Callable, old_x: torch.Tensor):
            pass

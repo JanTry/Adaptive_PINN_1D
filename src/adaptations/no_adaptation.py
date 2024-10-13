@@ -9,5 +9,5 @@ class NoAdaptation(AdaptationInterface):
     def __init__(self, x_range, base_points: torch.Tensor, max_number_of_points):
         pass
 
-    def refine(self, loss_function: Callable, points: torch.Tensor):
-        return points
+    def refine(self, loss_function: Callable, old_x: torch.Tensor):
+        return old_x
