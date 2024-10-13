@@ -1,8 +1,9 @@
 import sys
+import torch
+import logging
 
 from src.enums.adaptations import EAdaptations
 from src.enums.problems import EProblems
-import logging
 
 PROBLEM = EProblems.DIFFUSION
 ADAPTATION = EAdaptations.NO_ADAPTATION
@@ -11,7 +12,6 @@ ADAPTATION = EAdaptations.NO_ADAPTATION
 NUM_BASE_POINTS = 20 # DEF 20
 NUM_MAX_POINTS = 200 # DEF 200
 NUM_TEST_POINTS = 20 # DEF 20
-
 
 # PINN settings
 LAYERS = 3  # DEF 3
@@ -28,7 +28,7 @@ NUMBER_EPOCHS = 1000  # DEF 1000, number of EPOCHS per 1 adaptation iteration
 MAX_ITERS = 1000  # DEF 1000, maximum number of iterations for a run
 LOG_LEVEL = logging.DEBUG  # DEF logging.INFO
 
-
+# logger config
 logging.basicConfig(
     level=LOG_LEVEL,
     format='%(asctime)s[%(levelname)s] %(message)s',
@@ -37,6 +37,14 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout)
     ]
 )
+
+# Device
+logging.log(logging.DEBUG, torch.cuda.is_available())
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+logging.log(logging.INFO, f'Using device: {DEVICE}')
+
+
+
 
 
 

@@ -6,8 +6,9 @@ import torch
 
 
 class MiddlePointAdaptation(AdaptationInterface):
-    def __init__(self, x_range: [float, float], max_number_of_points: int=params.NUM_MAX_POINTS):
+    def __init__(self, x_range: [float, float], base_points: torch.Tensor, max_number_of_points: int=params.NUM_MAX_POINTS):
         self.x_range = x_range
+        self.base_points = base_points
         self.max_number_of_points = max_number_of_points
         # TODO -> Implement
 

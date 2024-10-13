@@ -6,7 +6,7 @@ import torch
 
 class AdaptationInterface(ABC):
     @abstractmethod
-    def __init__(self, x_range: [float, float], max_number_of_points: int):
+    def __init__(self, x_range: [float, float], base_points: torch.Tensor, max_number_of_points: int):
         pass
 
     @abstractmethod

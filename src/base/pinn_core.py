@@ -81,13 +81,13 @@ def train_model(
     max_epochs: int = 1_000,
     optimizer = None
 ) -> torch.Tensor:
-    if optimizer == None:
+    if optimizer is None:
         optimizer = torch.optim.Adam(nn_approximator.parameters(), lr=learning_rate)
 
-    convergence_data = torch.empty((max_epochs), device=device)
+    convergence_data = torch.empty(max_epochs, device=device)
 
     for epoch in range(max_epochs):
-        loss = loss_fn(nn_approximator)
+        loss = loss_fn(pinn=nn_approximator)
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
         optimizer.step()

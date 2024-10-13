@@ -6,6 +6,13 @@ import torch
 
 class ProblemInterface(ABC):
     @abstractmethod
+    def __init__(self):
+        """
+        Constructor used by factory method
+        """
+        pass
+
+    @abstractmethod
     def get_range(self) -> [float, float]:
         """
         :return: range of x (omega)
@@ -31,22 +38,13 @@ class ProblemInterface(ABC):
         """
         pass
 
-    @abstractmethod
-    def f_boundary_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
-        """
-        Calculation of loss function for points that are on the boundary
-        :param x: list of x locations of points
-        :param pinn: pinn approximator
-        :return: loss function values at given points
-        """
-        pass
 
     @abstractmethod
     def compute_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
         """
         Calculate final loss for all x elements
         Check the final line for the formula
-        :param x: list of x locations of points
+        :param x: list of x locations of points. Exactly 1 point on each of the boundaries is required
         :param pinn: pinn approximator
         :return: value of the loss function (not just a sum ;) )
         """
