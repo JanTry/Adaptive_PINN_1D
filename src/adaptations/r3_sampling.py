@@ -16,6 +16,7 @@ class R3Adaptation:
         self.max_iterations = params.DEFAULT_R3_MAX_ITERATIONS
 
     def refine(self, loss_function: Callable, old_x: torch.Tensor) -> torch.Tensor:
+        # We don't want to refine the boundary points:
         x = old_x.detach().clone().requires_grad_(True)[1:-1]
         for _ in range(self.max_iterations):
             residual_function_values = loss_function(x).abs().reshape(-1)
@@ -31,5 +32,5 @@ class R3Adaptation:
                 x = torch.cat([retained_x, random_x])
             else:
                 x = retained_x
-        x = torch.cat([old_x[0:1], x, old_x[-1:]]).sort()[0]
-        return x.detach().clone().requires_grad_(True)
+        refined_x = torch.cat([old_x[0:1], x, old_x[-1:]]).sort()[0]
+        return refined_x.detach().clone().requires_grad_(True)
