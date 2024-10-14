@@ -40,13 +40,10 @@ logging.basicConfig(
 # Device
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")
-    print("Using CUDA")
 elif torch.backends.mps.is_available():
     DEVICE = torch.device("mps")
-    print("Using MPS")
 else:
     DEVICE = torch.device("cpu")
-    print("Using CPU")
 logging.log(logging.INFO, f"Using device: {DEVICE}")
 
 # R3
