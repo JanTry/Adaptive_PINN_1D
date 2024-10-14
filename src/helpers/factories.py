@@ -5,6 +5,7 @@ import src.params.params as params
 from src.adaptations.density_sampling import DensitySamplingAdaptation
 from src.adaptations.middle_point import MiddlePointAdaptation
 from src.adaptations.no_adaptation import NoAdaptation
+from src.adaptations.r3_sampling import R3Adaptation
 from src.enums.adaptations import EAdaptations
 from src.enums.problems import EProblems
 from src.problems.diffusion import DiffusionProblem
@@ -26,12 +27,17 @@ def problem_factory(problem: EProblems):
     return problem_classes[problem]()
 
 
-def adaptation_factory(adaptation: EAdaptations, base_points: torch.Tensor, x_range: [float, float],
-                       max_number_of_points: int=params.NUM_MAX_POINTS):
+def adaptation_factory(
+    adaptation: EAdaptations,
+    base_points: torch.Tensor,
+    x_range: [float, float],
+    max_number_of_points: int = params.NUM_MAX_POINTS,
+):
     adaptation_classes = {
         EAdaptations.NO_ADAPTATION: NoAdaptation,
         EAdaptations.MIDDLE_POINT: MiddlePointAdaptation,
         EAdaptations.DENSITY_SAMPLING: DensitySamplingAdaptation,
+        EAdaptations.R3: R3Adaptation,
     }
 
     return adaptation_classes[adaptation](x_range, base_points, max_number_of_points)
