@@ -38,8 +38,8 @@ logging.basicConfig(
 # Device
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")
-elif torch.backends.mps.is_available():
-    DEVICE = torch.device("mps")
+# elif torch.backends.mps.is_available():
+#     DEVICE = torch.device("mps")
 else:
     DEVICE = torch.device("cpu")
 logging.log(logging.INFO, f"Using device: {DEVICE}")
