@@ -2,12 +2,10 @@ import sys
 import torch
 import logging
 
-from src.enums.adaptations import EAdaptations
 from src.enums.problems import EProblems
 
 # Used only if not specified in the PINN training run
 PROBLEM = EProblems.DIFFUSION
-ADAPTATION = EAdaptations.NO_ADAPTATION
 
 # Collocation points limits
 NUM_MAX_POINTS = 200  # DEF 200
@@ -45,6 +43,3 @@ elif torch.backends.mps.is_available():
 else:
     DEVICE = torch.device("cpu")
 logging.log(logging.INFO, f"Using device: {DEVICE}")
-
-# R3
-DEFAULT_R3_MAX_ITERATIONS = 5

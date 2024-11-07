@@ -1,25 +1,32 @@
 from typing import Callable
-from src.helpers.adaptation_interface import AdaptationInterface
-import src.params.params as params
 
+import src.params.params as params
 import torch
+from src.adaptations.adaptation_interface import AdaptationInterface
 
 
 class DensitySamplingAdaptation(AdaptationInterface):
-    def __init__(self, x_range, base_points: torch.Tensor, max_number_of_points=params.NUM_MAX_POINTS):
-        self.x_range = x_range
-        self.base_points = torch.linspace(x_range[0], x_range[1], steps=2, device=params.DEVICE)
-        self.max_number_of_points = max_number_of_points
-
     def refine(self, loss_function: Callable, old_x: torch.Tensor):
+        self.validate_problem_details()
         mesh_element_points = self.__prepare_mesh_points(loss_function=loss_function)
-        mesh_elements_loss = self.__get_elements_loss(mesh_points=mesh_element_points, loss_function=loss_function)
-        bucket_indices = mesh_elements_loss.multinomial(num_samples=self.max_number_of_points - 2, replacement=True)
-        points_per_element = torch.bincount(bucket_indices, minlength=torch.numel(mesh_elements_loss))
+        mesh_elements_loss = self.__get_elements_loss(
+            mesh_points=mesh_element_points, loss_function=loss_function
+        )
+        bucket_indices = mesh_elements_loss.multinomial(
+            num_samples=self.max_number_of_points - 2, replacement=True
+        )
+        points_per_element = torch.bincount(
+            bucket_indices, minlength=torch.numel(mesh_elements_loss)
+        )
         return self.__get_points(mesh_element_points, points_per_element)
 
-    def __prepare_mesh_points(self, loss_function: Callable, max_level: int=params.MAX_DEPTH,
-                              tol: float=params.TOLERANCE):
+    def __prepare_mesh_points(
+        self,
+        loss_function: Callable,
+        max_level: int = params.MAX_DEPTH,
+        tol: float = params.TOLERANCE,
+    ):
+        self.validate_problem_details()
         x = self.base_points.detach().clone().requires_grad_(True)
         refined = True
         adaptation_level = 0
@@ -61,18 +68,29 @@ class DensitySamplingAdaptation(AdaptationInterface):
             el_loss = torch.trapezoid(int_y, int_x, dim=0) / (x2 - x1)
             loss_values.append(el_loss)
 
-        return torch.tensor(loss_values, device=mesh_points.device).detach().clone().requires_grad_(True)
+        return (
+            torch.tensor(loss_values, device=mesh_points.device)
+            .detach()
+            .clone()
+            .requires_grad_(True)
+        )
 
     def __get_points(self, mesh_points, points_per_element):
-        points = torch.tensor(self.x_range, dtype=torch.float, device=mesh_points.device)
+        points = torch.tensor(
+            self.x_range, dtype=torch.float, device=mesh_points.device
+        )
 
         for i in range(torch.numel(points_per_element)):
             x1, x2 = mesh_points[i], mesh_points[i + 1]
 
-            new_ten = torch.tensor((points_per_element[i], 1), dtype=torch.float,
-                                   device=mesh_points.device).uniform_(x1.item(), x2.item())
+            new_ten = torch.tensor(
+                (points_per_element[i], 1), dtype=torch.float, device=mesh_points.device
+            ).uniform_(x1.item(), x2.item())
 
             points = torch.cat((points, new_ten))
         points = points.sort()[0]
 
         return points.reshape(-1, 1).detach().clone().requires_grad_(True)
+
+    def __str__(self) -> str:
+        return "density_sampling"
