@@ -4,6 +4,7 @@ from .hms import HMSAdaptation
 from .middle_point import MiddlePointAdaptation
 from .no_adaptation import NoAdaptation
 from .r3 import R3Adaptation
+from .random import RandomSearchWithSelection, SelectionMethod
 
 __all__ = [
     "DEAdaptation",
@@ -12,4 +13,6 @@ __all__ = [
     "MiddlePointAdaptation",
     "NoAdaptation",
     "R3Adaptation",
+    "RandomSearchWithSelection",
+    "SelectionMethod",
 ]
