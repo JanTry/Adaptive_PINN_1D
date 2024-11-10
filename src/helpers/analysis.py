@@ -1,21 +1,21 @@
-from src.enums.problems import EProblems
-from src.adaptations.adaptation_interface import AdaptationInterface
+import os
+
+import pandas as pd
+import src.params.params as params
+import torch
 from src.adaptations import (
-    HMSAdaptation,
-    R3Adaptation,
-    NoAdaptation,
     DEAdaptation,
     DensitySamplingAdaptation,
+    HMSAdaptation,
     MiddlePointAdaptation,
+    NoAdaptation,
+    R3Adaptation,
+    RandomSearchWithSelection,
+    SelectionMethod,
 )
-import os
-import src.params.params as params
-import pandas as pd
-import torch
-
-N_ITERS_FILE = "n_iters.pt"
-TIME_FILE = "exec_time.pt"
-POINT_FILE = "point_data.pt"
+from src.adaptations.adaptation_interface import AdaptationInterface
+from src.enums.problems import EProblems
+from src.plots import N_ITERS_FILE, TIME_FILE
 
 ALL_ADAPTATIONS = [
     NoAdaptation(),
@@ -24,6 +24,8 @@ ALL_ADAPTATIONS = [
     R3Adaptation(),
     HMSAdaptation(),
     DEAdaptation(),
+    RandomSearchWithSelection(selection_method=SelectionMethod.ROULETTE),
+    RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
 ]
 
 
@@ -32,8 +34,7 @@ def get_path(problem_type: EProblems, adaptation: AdaptationInterface) -> str:
         "results",
         problem_type.value,
         str(adaptation),
-        f"L{params.LAYERS}_N{params.NEURONS}_"
-        f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
+        f"L{params.LAYERS}_N{params.NEURONS}_" f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
         f"LR{params.LEARNING_RATE}_TOL{params.TOLERANCE}",
     )
 
@@ -51,9 +52,7 @@ def extract_df_from_results(
                     [dir for dir in os.listdir(path) if str.isdigit(dir)],
                     key=lambda x: int(x),
                 )
-                iterations = [
-                    torch.load(os.path.join(path, run, N_ITERS_FILE)) for run in runs
-                ]
+                iterations = [torch.load(os.path.join(path, run, N_ITERS_FILE)) for run in runs]
                 times = [torch.load(os.path.join(path, run, TIME_FILE)) for run in runs]
                 all_rows.extend(
                     [

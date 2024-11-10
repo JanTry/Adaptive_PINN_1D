@@ -1,6 +1,5 @@
-import torch
 import numpy as np
-
+import torch
 from src.base.pinn_core import PINN, dfdx, f
 from src.helpers.problem_interface import ProblemInterface
 
@@ -17,7 +16,7 @@ class DiffusionProblem(ProblemInterface):
         return 2 * (1 - torch.exp((x - 1) / self.eps)) / (1 - np.exp(-2 / self.eps)) + x - 1
 
     def f_inner_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
-        return - self.eps * dfdx(pinn, x, order=2) + dfdx(pinn, x, order=1) - 1.0
+        return -self.eps * dfdx(pinn, x, order=2) + dfdx(pinn, x, order=1) - 1.0
 
     def compute_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
         # Left boundary condition
@@ -32,10 +31,6 @@ class DiffusionProblem(ProblemInterface):
 
         interior_loss = self.f_inner_loss(x[1:-1], pinn)
 
-        final_loss = (
-                interior_loss.pow(2).mean()
-                + boundary_loss_left.pow(2).mean()
-                + boundary_loss_right.pow(2).mean()
-        )
+        final_loss = interior_loss.pow(2).mean() + boundary_loss_left.pow(2).mean() + boundary_loss_right.pow(2).mean()
 
         return final_loss

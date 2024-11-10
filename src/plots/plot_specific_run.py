@@ -5,11 +5,17 @@ import matplotlib.pyplot as plt
 import src.params.params as params
 import torch
 from matplotlib import rc
-from src.base.pinn_core import f
 from src.adaptations.adaptation_interface import AdaptationInterface
+from src.base.pinn_core import f
 from src.enums.problems import EProblems
 from src.helpers.factories import problem_factory
 from src.helpers.mesh_1D import get_mesh
+
+N_ITERS_FILE = "n_iters.pt"
+TIME_FILE = "exec_time.pt"
+CONVERGENCE_FILE = "convergence.pt"
+PINN_FILE = "pinn.pt"
+POINT_DATA_FILE = "point_data.pt"
 
 
 def plot_specific_run(
@@ -42,16 +48,16 @@ def plot_specific_run(
     plt.rcParams["figure.dpi"] = 150
     rc("animation", html="html5")
 
-    nn_approximator = torch.load(os.path.join(path, f"pinn.pt"))
-    convergence_data = torch.load(os.path.join(path, f"convergence.pt"))
-    n_iters = torch.load(os.path.join(path, f"n_iters.pt"))
-    exec_time = torch.load(os.path.join(path, f"exec_time.pt"))
+    nn_approximator = torch.load(os.path.join(path, PINN_FILE))
+    convergence_data = torch.load(os.path.join(path, CONVERGENCE_FILE))
+    n_iters = torch.load(os.path.join(path, N_ITERS_FILE))
+    exec_time = torch.load(os.path.join(path, TIME_FILE))
 
     os.makedirs(os.path.join(path, "plots", "iterations"), exist_ok=True)
 
     # Plot points for each iteration
     if plot_training_points:
-        point_data = torch.load(os.path.join(path, f"point_data.pt"))
+        point_data = torch.load(os.path.join(path, POINT_DATA_FILE))
         for i, p in enumerate(point_data):
             fig, ax = plt.subplots()
             ax.scatter(*(p.transpose(0, 1).cpu().detach().numpy()), s=1)
@@ -60,9 +66,7 @@ def plot_specific_run(
             plt.close(fig)
 
     # Plot the solution in a "dense" mesh
-    n_x = torch.linspace(
-        x_range[0], x_range[1], steps=1000 + 2, requires_grad=True, device=device
-    )[1:-1].reshape(-1)
+    n_x = torch.linspace(x_range[0], x_range[1], steps=1000 + 2, requires_grad=True, device=device)[1:-1].reshape(-1)
     n_x, _ = get_mesh(n_x, x_range[0], x_range[1])
 
     y = f(nn_approximator, n_x)
@@ -70,7 +74,7 @@ def plot_specific_run(
     ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy())
     ax.scatter(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), s=1)
     ax.set_title(f"PINN solution,\n time = {exec_time:.2f}s, iterations = {n_iters}")
-    fig.savefig(os.path.join(path, "plots", f"pinn_solution"))
+    fig.savefig(os.path.join(path, "plots", "pinn_solution"))
     plt.close(fig)
 
     # Plot exact solution
@@ -78,7 +82,7 @@ def plot_specific_run(
     fig, ax = plt.subplots()
     ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy())
     ax.set_title(f"Exact solution,\n time = {exec_time:.2f}s, iterations = {n_iters}")
-    fig.savefig(os.path.join(path, "plots", f"exact_solution"))
+    fig.savefig(os.path.join(path, "plots", "exact_solution"))
     plt.close(fig)
 
     # PINN and exact solutions on one plot
@@ -86,10 +90,8 @@ def plot_specific_run(
     ax.plot(n_x.cpu().detach().numpy(), exact_y.cpu().detach().numpy(), label="Exact")
     ax.plot(n_x.cpu().detach().numpy(), y.cpu().detach().numpy(), "--", label="PINN")
     ax.legend()
-    ax.set_title(
-        f"PINN and exact solutions,\n time = {exec_time:.2f}s, iterations = {n_iters}"
-    )
-    fig.savefig(os.path.join(path, "plots", f"solutions"))
+    ax.set_title(f"PINN and exact solutions,\n time = {exec_time:.2f}s, iterations = {n_iters}")
+    fig.savefig(os.path.join(path, "plots", "solutions"))
     plt.close(fig)
 
     # Plot error
@@ -97,10 +99,8 @@ def plot_specific_run(
     rc("ytick", labelsize=12)
     fig, ax = plt.subplots()
     ax.plot(n_x.cpu().detach().numpy(), error.cpu().detach().numpy())
-    ax.set_title(
-        f"Error: NN_u - exact_solution,\n time = {exec_time:.2f}s, iterations = {n_iters}"
-    )
-    fig.savefig(os.path.join(path, "plots", f"error"))
+    ax.set_title(f"Error: NN_u - exact_solution,\n time = {exec_time:.2f}s, iterations = {n_iters}")
+    fig.savefig(os.path.join(path, "plots", "error"))
     plt.close(fig)
 
     # Plot convergence
@@ -109,5 +109,5 @@ def plot_specific_run(
     fig, ax = plt.subplots()
     ax.semilogy(convergence_data.cpu().detach().numpy())
     ax.set_title(f"Convergence,\n time = {exec_time:.2f}s, iterations = {n_iters}")
-    fig.savefig(os.path.join(path, "plots", f"convergence"))
+    fig.savefig(os.path.join(path, "plots", "convergence"))
     plt.close(fig)

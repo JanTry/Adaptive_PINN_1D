@@ -20,12 +20,7 @@ class MiddlePointAdaptation(AdaptationInterface):
             refined = False
             new_points = []
             for x1, x2 in zip(x[:-1], x[1:]):
-                int_x = (
-                    torch.linspace(x1.item(), x2.item(), 20)
-                    .requires_grad_(True)
-                    .reshape(-1, 1)
-                    .to(x.device)
-                )
+                int_x = torch.linspace(x1.item(), x2.item(), 20).requires_grad_(True).reshape(-1, 1).to(x.device)
                 int_y = loss_function(x=int_x) ** 2
                 el_loss = torch.trapezoid(int_y, int_x, dim=0) / (x2 - x1)
                 if el_loss > params.TOLERANCE:
