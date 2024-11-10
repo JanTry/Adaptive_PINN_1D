@@ -2,3 +2,5 @@
 .idea
 __*
 results
+**/__pycache__
+pinn_env

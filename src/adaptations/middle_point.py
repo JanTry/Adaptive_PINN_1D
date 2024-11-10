@@ -1,17 +1,17 @@
 from typing import Callable
-from src.helpers.adaptation_interface import AdaptationInterface
-import src.params.params as params
 
+import src.params.params as params
 import torch
+from src.adaptations.adaptation_interface import AdaptationInterface
 
 
 class MiddlePointAdaptation(AdaptationInterface):
-    def __init__(self, x_range: [float, float], base_points: torch.Tensor, max_number_of_points: int=params.NUM_MAX_POINTS):
-        self.x_range = x_range
-        self.base_points = base_points
-        self.max_number_of_points = max_number_of_points
+    """
+    The old version of the adaptation.
+    """
 
     def refine(self, loss_function: Callable, old_x: torch.Tensor):
+        self.validate_problem_details()
         x = self.base_points.detach().clone().requires_grad_(True)
         n_points = x.numel()
         refined = True
@@ -34,3 +34,6 @@ class MiddlePointAdaptation(AdaptationInterface):
             x = torch.cat((x, torch.tensor(new_points, device=x.device))).sort()[0]
             n_points = x.numel()
         return x.reshape(-1, 1).detach().clone().requires_grad_(True)
+
+    def __str__(self) -> str:
+        return "middle_point"
