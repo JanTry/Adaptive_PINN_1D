@@ -5,6 +5,8 @@ from .middle_point import MiddlePointAdaptation
 from .no_adaptation import NoAdaptation
 from .r3 import R3Adaptation
 from .random import RandomSearchWithSelection, SelectionMethod
+from .random_r import RandomRAdaptation
+from .langevin import LangevinAdaptation
 
 __all__ = [
     "DEAdaptation",
@@ -15,4 +17,6 @@ __all__ = [
     "R3Adaptation",
     "RandomSearchWithSelection",
     "SelectionMethod",
+    "RandomRAdaptation",
+    "LangevinAdaptation",
 ]
