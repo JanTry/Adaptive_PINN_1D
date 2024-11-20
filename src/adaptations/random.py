@@ -29,7 +29,9 @@ def tournament_select(x: torch.Tensor, y: torch.Tensor, k: int) -> torch.Tensor:
     tournaments = torch.randint(0, num_candidates, (num_candidates, k))
     tournament_scores = y[tournaments]
     best_indices_in_tournament = torch.argmax(tournament_scores, dim=1)
-    selected_indices = tournaments[torch.arange(num_candidates), best_indices_in_tournament]
+    selected_indices = tournaments[
+        torch.arange(num_candidates), best_indices_in_tournament
+    ]
     return x[selected_indices]
 
 
@@ -52,7 +54,10 @@ class RandomSearchWithSelection(AdaptationInterface):
     def refine(self, loss_function: Callable, old_x: torch.Tensor) -> torch.Tensor:
         old_y = loss_function(old_x).abs().reshape(-1)
         random_x = (
-            torch.empty(self.eval_cutoff, old_x.shape[1]).uniform_(*self.x_range).requires_grad_(True).to(old_x.device)
+            torch.empty(self.eval_cutoff, old_x.shape[1])
+            .uniform_(*self.x_range)
+            .requires_grad_(True)
+            .to(old_x.device)
         )
         random_y = loss_function(random_x).abs().reshape(-1)
         selected_x = roulette_select(
@@ -60,7 +65,9 @@ class RandomSearchWithSelection(AdaptationInterface):
             torch.cat([random_y, old_y]),
             old_x.shape[0] - 2,
         )
-        refined_x = torch.cat([old_x[0:1], selected_x.reshape(-1, 1), old_x[-1:]]).sort()[0]
+        refined_x = torch.cat(
+            [old_x[0:1], selected_x.reshape(-1, 1), old_x[-1:]]
+        ).sort()[0]
         return refined_x.detach().clone().requires_grad_(True)
 
     def __str__(self) -> str:
@@ -69,3 +76,19 @@ class RandomSearchWithSelection(AdaptationInterface):
             if self.eval_cutoff == DEFAULT_EVAL_CUTOFF
             else f"random_{self.selection_method.value}_{self.eval_cutoff}"
         )
+
+
+class RandomRAdaptation(AdaptationInterface):
+    def refine(self, loss_function: Callable, old_x: torch.Tensor) -> torch.Tensor:
+        self.validate_problem_details()
+        # Exclude boundary points
+        x = (
+            torch.empty(old_x.shape[0] - 2, old_x.shape[1])
+            .uniform_(*self.x_range)
+            .to(old_x.device)
+        )
+        refined_x = torch.cat([old_x[0:1], x, old_x[-1:]]).sort()[0]
+        return refined_x.detach().clone().requires_grad_(True)
+
+    def __str__(self) -> str:
+        return "random_r"
