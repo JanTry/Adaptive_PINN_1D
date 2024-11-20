@@ -1,34 +1,22 @@
-from src.adaptations.adaptation_interface import AdaptationInterface
+from typing import Callable
+
+import numpy as np
 import src.params.params as params
 import torch
-from typing import Callable
-import numpy as np
 from pyhms import (
     SEA,
     DontStop,
     EALevelConfig,
     EvalCutoffProblem,
-    FitnessSteadiness,
     FunctionProblem,
     MetaepochLimit,
-    hms,
     SingularProblemEvalLimitReached,
-)
-from pyhms.sprout import (
-    DemeLimit,
-    LevelLimit,
-    NBC_FarEnough,
-    NBC_Generator,
-    NBCGeneratorWithLocalMethod,
-    SproutMechanism,
-    get_simple_sprout,
-)
-from pyhms.demes.single_pop_eas.multiwinner import (
-    UtilityFunction,
-    CCGreedyPolicy,
-    MultiwinnerSelection,
+    hms,
 )
 from pyhms.core.population import Population
+from pyhms.demes.single_pop_eas.multiwinner import CCGreedyPolicy, MultiwinnerSelection, UtilityFunction
+from pyhms.sprout import get_simple_sprout
+from src.adaptations.adaptation_interface import AdaptationInterface
 
 DEFAULT_EVAL_CUTOFF = 5000
 DEFAULT_N_DEMES = 10
@@ -42,20 +30,10 @@ def run_hms(
     eval_cutoff: int,
 ) -> np.ndarray:
     def objective_function(x: np.ndarray) -> float:
-        x_tensor = (
-            torch.tensor(x)
-            .float()
-            .reshape(-1, 1)
-            .requires_grad_(True)
-            .to(params.DEVICE)
-        )
-        return (
-            loss_function(x_tensor).abs().detach().to("cpu").numpy().reshape(-1).item()
-        )
+        x_tensor = torch.tensor(x).float().reshape(-1, 1).requires_grad_(True).to(params.DEVICE)
+        return loss_function(x_tensor).abs().detach().to("cpu").numpy().reshape(-1).item()
 
-    function_problem = FunctionProblem(
-        objective_function, maximize=True, bounds=np.array([x_range]), use_cache=True
-    )
+    function_problem = FunctionProblem(objective_function, maximize=True, bounds=np.array([x_range]), use_cache=True)
     problem_with_cutoff = EvalCutoffProblem(function_problem, eval_cutoff)
     config = [
         EALevelConfig(
@@ -76,9 +54,7 @@ def run_hms(
         ),
     ]
     global_stop_condition = SingularProblemEvalLimitReached(eval_cutoff)
-    sprout_condition = get_simple_sprout(
-        far_enough=(x_range[1] - x_range[0] / DEFAULT_N_DEMES)
-    )
+    sprout_condition = get_simple_sprout(far_enough=(x_range[1] - x_range[0] / DEFAULT_N_DEMES))
     hms_tree = hms(
         config,
         global_stop_condition,
@@ -97,9 +73,7 @@ def run_hms(
         voting_scheme=CCGreedyPolicy(),
         k=number_of_points,
     )
-    selected_population = selector(
-        Population.from_individuals(last_population_individuals)
-    )
+    selected_population = selector(Population.from_individuals(last_population_individuals))
     return selected_population.genomes
 
 
@@ -120,8 +94,4 @@ class HMSAdaptation(AdaptationInterface):
         return refined_x.detach().clone().requires_grad_(True).to(old_x.device)
 
     def __str__(self) -> str:
-        return (
-            "hms"
-            if self.eval_cutoff == DEFAULT_EVAL_CUTOFF
-            else f"hms_{self.eval_cutoff}"
-        )
+        return "hms" if self.eval_cutoff == DEFAULT_EVAL_CUTOFF else f"hms_{self.eval_cutoff}"

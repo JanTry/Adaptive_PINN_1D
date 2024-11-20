@@ -29,11 +29,7 @@ class R3Adaptation(AdaptationInterface):
             retained_x = x[residual_function_values > threshold]
             num_points_to_sample = x.shape[0] - retained_x.shape[0]
             if num_points_to_sample > 0:
-                random_x = (
-                    torch.empty(num_points_to_sample, x.shape[1])
-                    .uniform_(*self.x_range)
-                    .to(x.device)
-                )
+                random_x = torch.empty(num_points_to_sample, x.shape[1]).uniform_(*self.x_range).to(x.device)
                 x = torch.cat([retained_x, random_x])
             else:
                 x = retained_x
@@ -41,8 +37,4 @@ class R3Adaptation(AdaptationInterface):
         return refined_x.detach().clone().requires_grad_(True)
 
     def __str__(self) -> str:
-        return (
-            "r3"
-            if self.max_iterations == DEFAULT_R3_MAX_ITERATIONS
-            else f"r3_{self.max_iterations}"
-        )
+        return "r3" if self.max_iterations == DEFAULT_R3_MAX_ITERATIONS else f"r3_{self.max_iterations}"

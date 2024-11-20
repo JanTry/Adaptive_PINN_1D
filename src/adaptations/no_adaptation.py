@@ -1,6 +1,5 @@
 from typing import Callable
 
-import src.params.params as params
 import torch
 from src.adaptations.adaptation_interface import AdaptationInterface
 

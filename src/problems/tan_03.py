@@ -1,5 +1,4 @@
 import torch
-
 from src.base.pinn_core import PINN, dfdx, f
 from src.helpers.problem_interface import ProblemInterface
 
@@ -15,7 +14,7 @@ class Tan03Problem(ProblemInterface):
         return torch.tan(x - 0.3)
 
     def f_inner_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
-        return dfdx(pinn, x, order=2) + 2 * torch.sin(0.3 - x) / torch.pow(torch.cos(0.3-x), 3)
+        return dfdx(pinn, x, order=2) + 2 * torch.sin(0.3 - x) / torch.pow(torch.cos(0.3 - x), 3)
 
     def compute_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
         # Left boundary condition
@@ -30,10 +29,6 @@ class Tan03Problem(ProblemInterface):
 
         interior_loss = self.f_inner_loss(x[1:-1], pinn)
 
-        final_loss = (
-                interior_loss.pow(2).mean()
-                + boundary_loss_left.pow(2).mean()
-                + boundary_loss_right.pow(2).mean()
-        )
+        final_loss = interior_loss.pow(2).mean() + boundary_loss_left.pow(2).mean() + boundary_loss_right.pow(2).mean()
 
         return final_loss

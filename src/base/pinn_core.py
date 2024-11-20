@@ -4,7 +4,6 @@
 
 from typing import Callable
 
-
 import torch
 from torch import nn
 
@@ -16,9 +15,7 @@ class PINN(nn.Module):
     to approximate the solution of the differential equation
     """
 
-    def __init__(
-        self, num_hidden: int, dim_hidden: int, act=nn.Tanh(), pinning: bool = False
-    ):
+    def __init__(self, num_hidden: int, dim_hidden: int, act=nn.Tanh(), pinning: bool = False):
         super().__init__()
 
         self.pinning = pinning
@@ -27,9 +24,7 @@ class PINN(nn.Module):
         self.layer_out = nn.Linear(dim_hidden, 1)
 
         num_middle = num_hidden - 1
-        self.middle_layers = nn.ModuleList(
-            [nn.Linear(dim_hidden, dim_hidden) for _ in range(num_middle)]
-        )
+        self.middle_layers = nn.ModuleList([nn.Linear(dim_hidden, dim_hidden) for _ in range(num_middle)])
         self.act = act
 
     def forward(self, x):
@@ -79,7 +74,7 @@ def train_model(
     device,
     learning_rate: float = 0.01,
     max_epochs: int = 1_000,
-    optimizer = None
+    optimizer=None,
 ) -> torch.Tensor:
     if optimizer is None:
         optimizer = torch.optim.Adam(nn_approximator.parameters(), lr=learning_rate)
@@ -95,7 +90,7 @@ def train_model(
         convergence_data[epoch] = loss.detach()
 
         # if epoch % 1000 == 0:
-            # print(f"Epoch: {epoch} - Loss: {float(loss):>7f}")
+        # print(f"Epoch: {epoch} - Loss: {float(loss):>7f}")
 
     # print(f"Final Epoch: - Loss: {float(loss):>7f}")
 
