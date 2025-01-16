@@ -5,7 +5,7 @@ from functools import partial
 
 import src.params.params_1D as params
 import torch
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 from src.base.exit_criterion import exit_criterion_1D
 from src.base.pinn_1D_core import PINN_1D, f, train_model
 from src.enums.problems import Problems1D
@@ -15,7 +15,7 @@ from src.plots.plots_1D.plot_specific_run import CONVERGENCE_FILE, N_ITERS_FILE,
 
 def train_PINN_1D(
     run_id: int,
-    adaptation: AdaptationInterface,
+    adaptation: AdaptationInterface1D,
     problem_type: Problems1D = params.PROBLEM,
     save_training_data: bool = True,
 ):

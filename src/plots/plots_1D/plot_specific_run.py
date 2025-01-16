@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import src.params.params_1D as params
 import torch
 from matplotlib import rc
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 from src.base.pinn_1D_core import f
 from src.enums.problems import Problems1D
 from src.helpers.factories import problem_factory_1D
@@ -21,7 +21,7 @@ POINT_DATA_FILE = "point_data.pt"
 def plot_specific_run_1D(
     run_id: int,
     problem_type: Problems1D,
-    adaptation: AdaptationInterface,
+    adaptation: AdaptationInterface1D,
     tolerance: float = params.TOLERANCE,
     learning_rate: float = params.LEARNING_RATE,
     layers: int = params.LAYERS,

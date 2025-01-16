@@ -4,32 +4,32 @@ import pandas as pd
 import src.params.params_1D as params
 import torch
 from src.adaptations.adaptations_1D import (
-    DEAdaptation,
-    DensitySamplingAdaptation,
-    HMSAdaptation,
-    MiddlePointAdaptation,
-    NoAdaptation,
-    R3Adaptation,
+    DEAdaptation1D,
+    DensitySamplingAdaptation1D,
+    HMSAdaptation1D,
+    MiddlePointAdaptation1D,
+    NoAdaptation1D,
+    R3Adaptation1D,
     RandomSearchWithSelection,
     SelectionMethod,
 )
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 from src.enums.problems import Problems1D
 from src.plots.plots_1D import N_ITERS_FILE, TIME_FILE
 
 ALL_ADAPTATIONS = [
-    NoAdaptation(),
-    MiddlePointAdaptation(),
-    DensitySamplingAdaptation(),
-    R3Adaptation(),
-    HMSAdaptation(),
-    DEAdaptation(),
+    NoAdaptation1D(),
+    MiddlePointAdaptation1D(),
+    DensitySamplingAdaptation1D(),
+    R3Adaptation1D(),
+    HMSAdaptation1D(),
+    DEAdaptation1D(),
     RandomSearchWithSelection(selection_method=SelectionMethod.ROULETTE),
     RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
 ]
 
 
-def get_path(problem_type: Problems1D, adaptation: AdaptationInterface) -> str:
+def get_path(problem_type: Problems1D, adaptation: AdaptationInterface1D) -> str:
     return os.path.join(
         "results_1D",
         problem_type.value,
@@ -40,7 +40,7 @@ def get_path(problem_type: Problems1D, adaptation: AdaptationInterface) -> str:
 
 
 def extract_df_from_results(
-    adaptations: list[AdaptationInterface] = ALL_ADAPTATIONS,
+    adaptations: list[AdaptationInterface1D] = ALL_ADAPTATIONS,
 ) -> pd.DataFrame:
     all_rows = []
 

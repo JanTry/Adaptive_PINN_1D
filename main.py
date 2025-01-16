@@ -1,10 +1,10 @@
 from src.adaptations.adaptations_1D import (
-    DEAdaptation,
-    DensitySamplingAdaptation,
-    HMSAdaptation,
-    MiddlePointAdaptation,
-    NoAdaptation,
-    R3Adaptation,
+    DEAdaptation1D,
+    DensitySamplingAdaptation1D,
+    HMSAdaptation1D,
+    MiddlePointAdaptation1D,
+    NoAdaptation1D,
+    R3Adaptation1D,
     RandomSearchWithSelection,
     SelectionMethod,
 )
@@ -19,13 +19,13 @@ PROBLEM_TYPES = [
 ]
 
 ADAPTATIONS = [
-    DEAdaptation(),
-    MiddlePointAdaptation(),
-    DensitySamplingAdaptation(),
+    DEAdaptation1D(),
+    MiddlePointAdaptation1D(),
+    DensitySamplingAdaptation1D(),
     RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
-    HMSAdaptation(),
-    NoAdaptation(),
-    R3Adaptation(),
+    HMSAdaptation1D(),
+    NoAdaptation1D(),
+    R3Adaptation1D(),
     RandomSearchWithSelection(selection_method=SelectionMethod.ROULETTE),
     RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
 ]
