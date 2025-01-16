@@ -2,10 +2,10 @@ from typing import Callable
 
 import src.params.params_1D as params
 import torch
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 
-class DensitySamplingAdaptation(AdaptationInterface):
+class DensitySamplingAdaptation1D(AdaptationInterface1D):
     def refine(self, loss_function: Callable, old_x: torch.Tensor):
         self.validate_problem_details()
         mesh_element_points = self.__prepare_mesh_points(loss_function=loss_function)

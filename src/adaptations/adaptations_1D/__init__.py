@@ -1,24 +1,24 @@
-from .de import DEAdaptation
-from .density_sampling import DensitySamplingAdaptation
-from .gradient import GradientDescentAdaptation, LangevinAdaptation
-from .hms import HMSAdaptation
-from .mcmc import MetropolisHastingsAdaptation
-from .middle_point import MiddlePointAdaptation
-from .no_adaptation import NoAdaptation
-from .r3 import R3Adaptation
-from .random import RandomRAdaptation, RandomSearchWithSelection, SelectionMethod
+from .de import DEAdaptation1D
+from .density_sampling import DensitySamplingAdaptation1D
+from .gradient import GradientDescentAdaptation1D, LangevinAdaptation1D
+from .hms import HMSAdaptation1D
+from .mcmc import MetropolisHastingsAdaptation1D
+from .middle_point import MiddlePointAdaptation1D
+from .no_adaptation import NoAdaptation1D
+from .r3 import R3Adaptation1D
+from .random import RandomRAdaptation1D, RandomSearchWithSelection, SelectionMethod
 
 __all__ = [
-    "DEAdaptation",
-    "DensitySamplingAdaptation",
-    "HMSAdaptation",
-    "MiddlePointAdaptation",
-    "NoAdaptation",
-    "R3Adaptation",
+    "DEAdaptation1D",
+    "DensitySamplingAdaptation1D",
+    "HMSAdaptation1D",
+    "MiddlePointAdaptation1D",
+    "NoAdaptation1D",
+    "R3Adaptation1D",
     "RandomSearchWithSelection",
     "SelectionMethod",
-    "RandomRAdaptation",
-    "LangevinAdaptation",
-    "GradientDescentAdaptation",
-    "MetropolisHastingsAdaptation",
+    "RandomRAdaptation1D",
+    "LangevinAdaptation1D",
+    "GradientDescentAdaptation1D",
+    "MetropolisHastingsAdaptation1D",
 ]

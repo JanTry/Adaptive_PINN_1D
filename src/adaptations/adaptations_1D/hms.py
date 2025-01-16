@@ -16,7 +16,7 @@ from pyhms import (
 from pyhms.core.population import Population
 from pyhms.demes.single_pop_eas.multiwinner import CCGreedyPolicy, MultiwinnerSelection, UtilityFunction
 from pyhms.sprout import get_simple_sprout
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 DEFAULT_EVAL_CUTOFF = 5000
 DEFAULT_N_DEMES = 10
@@ -77,7 +77,7 @@ def run_hms(
     return selected_population.genomes
 
 
-class HMSAdaptation(AdaptationInterface):
+class HMSAdaptation1D(AdaptationInterface1D):
     def __init__(self, eval_cutoff: int = DEFAULT_EVAL_CUTOFF) -> None:
         self.eval_cutoff = eval_cutoff
 

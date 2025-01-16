@@ -1,12 +1,12 @@
 from typing import Callable
 
 import torch
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 DEFAULT_R3_MAX_ITERATIONS = 1
 
 
-class R3Adaptation(AdaptationInterface):
+class R3Adaptation1D(AdaptationInterface1D):
     """
     Daw, Arka, et al. "Mitigating propagation failures in physics-informed neural
     networks using retain-resample-release (r3) sampling."

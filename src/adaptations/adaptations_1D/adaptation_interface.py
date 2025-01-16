@@ -4,7 +4,7 @@ from typing import Callable
 import torch
 
 
-class AdaptationInterface(ABC):
+class AdaptationInterface1D(ABC):
     def __init__(self):
         # Problem details:
         self.x_range: tuple[float, float] | None = None

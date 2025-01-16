@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Callable
 
 import torch
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 DEFAULT_EVAL_CUTOFF = 5000
 
@@ -39,7 +39,7 @@ SELECTION_METHOD_TO_FUNCTION = {
 }
 
 
-class RandomSearchWithSelection(AdaptationInterface):
+class RandomSearchWithSelection(AdaptationInterface1D):
     def __init__(
         self,
         eval_cutoff: int = DEFAULT_EVAL_CUTOFF,
@@ -71,7 +71,7 @@ class RandomSearchWithSelection(AdaptationInterface):
         )
 
 
-class RandomRAdaptation(AdaptationInterface):
+class RandomRAdaptation1D(AdaptationInterface1D):
     def refine(self, loss_function: Callable, old_x: torch.Tensor) -> torch.Tensor:
         self.validate_problem_details()
         # Exclude boundary points

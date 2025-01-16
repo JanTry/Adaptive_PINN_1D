@@ -2,10 +2,10 @@ from typing import Callable
 
 import src.params.params_1D as params
 import torch
-from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 
-class MiddlePointAdaptation(AdaptationInterface):
+class MiddlePointAdaptation1D(AdaptationInterface1D):
     """
     The old version of the adaptation.
     """
