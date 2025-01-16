@@ -26,9 +26,5 @@ class AdaptationInterface(ABC):
         self.max_number_of_points = max_number_of_points
 
     def validate_problem_details(self) -> None:
-        if (
-            self.x_range is None
-            or self.base_points is None
-            or self.max_number_of_points is None
-        ):
+        if self.x_range is None or self.base_points is None or self.max_number_of_points is None:
             raise ValueError("Problem details not set.")

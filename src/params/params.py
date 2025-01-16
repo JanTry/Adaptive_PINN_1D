@@ -1,7 +1,7 @@
-import sys
-import torch
 import logging
+import sys
 
+import torch
 from src.enums.problems import EProblems
 
 # Used only if not specified in the PINN training run
@@ -24,7 +24,7 @@ NUM_BASE_MESH_POINTS = 20  # DEF 20, required for Middle points adaptation
 # RUN settings
 TOLERANCE = 1e-4  # DEF 1e-4, error tolerance
 NUMBER_EPOCHS = 1000  # DEF 1000, number of EPOCHS per 1 adaptation iteration
-MAX_ITERS = 100  # DEF 1000, maximum number of iterations for a run
+MAX_ITERS = 1000  # DEF 1000, maximum number of iterations for a run
 LOG_LEVEL = logging.INFO  # DEF logging.INFO
 
 # logger config

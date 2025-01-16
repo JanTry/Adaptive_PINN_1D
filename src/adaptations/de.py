@@ -1,4 +1,5 @@
 from typing import Callable
+
 import torch
 from src.adaptations.adaptation_interface import AdaptationInterface
 
@@ -57,9 +58,7 @@ class DEAdaptation(AdaptationInterface):
     def __generate_indices(self, population_size: int, device: torch.device):
         idxs = torch.arange(population_size, device=device)
         idxs_repeat = idxs.repeat(population_size, 1)
-        idxs_no_i = idxs_repeat[idxs_repeat != idxs.unsqueeze(1)].view(
-            population_size, population_size - 1
-        )
+        idxs_no_i = idxs_repeat[idxs_repeat != idxs.unsqueeze(1)].view(population_size, population_size - 1)
 
         r1 = torch.zeros(population_size, dtype=torch.long, device=device)
         r2 = torch.zeros(population_size, dtype=torch.long, device=device)
@@ -72,11 +71,7 @@ class DEAdaptation(AdaptationInterface):
         return r1, r2, r3
 
     def __str__(self) -> str:
-        return (
-            "de"
-            if self.max_iterations == DEFAULT_DE_MAX_ITERATIONS
-            else f"de_{self.max_iterations}"
-        )
+        return "de" if self.max_iterations == DEFAULT_DE_MAX_ITERATIONS else f"de_{self.max_iterations}"
 
 
 class StaticDEAdaptation(AdaptationInterface):
@@ -110,17 +105,13 @@ class StaticDEAdaptation(AdaptationInterface):
             improved = f_u >= f_x
             x = torch.where(improved.unsqueeze(1), u, x)
 
-        refined_x = torch.cat([self.base_points[0:1], x, self.base_points[-1:]]).sort()[
-            0
-        ]
+        refined_x = torch.cat([self.base_points[0:1], x, self.base_points[-1:]]).sort()[0]
         return refined_x.detach().clone().requires_grad_(True)
 
     def __generate_indices(self, population_size: int, device: torch.device):
         idxs = torch.arange(population_size, device=device)
         idxs_repeat = idxs.repeat(population_size, 1)
-        idxs_no_i = idxs_repeat[idxs_repeat != idxs.unsqueeze(1)].view(
-            population_size, population_size - 1
-        )
+        idxs_no_i = idxs_repeat[idxs_repeat != idxs.unsqueeze(1)].view(population_size, population_size - 1)
 
         r1 = torch.zeros(population_size, dtype=torch.long, device=device)
         r2 = torch.zeros(population_size, dtype=torch.long, device=device)
@@ -133,8 +124,4 @@ class StaticDEAdaptation(AdaptationInterface):
         return r1, r2, r3
 
     def __str__(self) -> str:
-        return (
-            "de"
-            if self.max_iterations == DEFAULT_DE_MAX_ITERATIONS
-            else f"de_{self.max_iterations}"
-        )
+        return "de" if self.max_iterations == DEFAULT_DE_MAX_ITERATIONS else f"de_{self.max_iterations}"

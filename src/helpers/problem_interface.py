@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from src.base.pinn_core import PINN
 
 import torch
+from src.base.pinn_core import PINN
 
 
 class ProblemInterface(ABC):
@@ -38,7 +38,6 @@ class ProblemInterface(ABC):
         """
         pass
 
-
     @abstractmethod
     def compute_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
         """
@@ -49,4 +48,3 @@ class ProblemInterface(ABC):
         :return: value of the loss function (not just a sum ;) )
         """
         pass
-

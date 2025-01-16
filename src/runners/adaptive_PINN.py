@@ -5,11 +5,12 @@ from functools import partial
 
 import src.params.params as params
 import torch
+from src.adaptations.adaptation_interface import AdaptationInterface
 from src.base.exit_criterion import exit_criterion
 from src.base.pinn_core import PINN, f, train_model
-from src.adaptations.adaptation_interface import AdaptationInterface
 from src.enums.problems import EProblems
 from src.helpers.factories import problem_factory
+from src.plots.plot_specific_run import CONVERGENCE_FILE, N_ITERS_FILE, PINN_FILE, POINT_DATA_FILE, TIME_FILE
 
 
 def train_PINN(
@@ -45,13 +46,9 @@ def train_PINN(
         device=params.DEVICE,
     ).reshape(-1, 1)
     # A set of base x points
-    base_x_mesh = torch.linspace(
-        x_range[0], x_range[1], steps=params.NUM_BASE_MESH_POINTS, device=params.DEVICE
-    )
+    base_x_mesh = torch.linspace(x_range[0], x_range[1], steps=params.NUM_BASE_MESH_POINTS, device=params.DEVICE)
     # A set of test points
-    test_x = torch.linspace(
-        x_range[0], x_range[1], steps=params.NUM_TEST_POINTS, device=params.DEVICE
-    )
+    test_x = torch.linspace(x_range[0], x_range[1], steps=params.NUM_TEST_POINTS, device=params.DEVICE)
 
     adaptation.set_problem_details(
         base_points=base_x_mesh,
@@ -115,8 +112,7 @@ def train_PINN(
         "results",
         problem_type.value,
         str(adaptation),
-        f"L{params.LAYERS}_N{params.NEURONS}_"
-        f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
+        f"L{params.LAYERS}_N{params.NEURONS}_" f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
         f"LR{params.LEARNING_RATE}_TOL{params.TOLERANCE}",
     )
 
@@ -125,15 +121,15 @@ def train_PINN(
     os.makedirs(name=path, exist_ok=True)
 
     pinn = pinn.cpu()
-    torch.save(pinn, os.path.join(path, f"pinn.pt"))
-    torch.save(n_iters, os.path.join(path, f"n_iters.pt"))
-    torch.save(exec_time, os.path.join(path, f"exec_time.pt"))
-    torch.save(convergence_data.detach(), os.path.join(path, f"convergence.pt"))
+    torch.save(pinn, os.path.join(path, PINN_FILE))
+    torch.save(n_iters, os.path.join(path, N_ITERS_FILE))
+    torch.save(exec_time, os.path.join(path, TIME_FILE))
+    torch.save(convergence_data.detach(), os.path.join(path, CONVERGENCE_FILE))
 
     if save_training_data:
-        torch.save(point_data, os.path.join(path, f"point_data.pt"))
+        torch.save(point_data, os.path.join(path, POINT_DATA_FILE))
 
-    with open(os.path.join(path, f"result.txt"), "w") as file:
+    with open(os.path.join(path, "result.txt"), "w") as file:
         file.write(f"PROBLEM = {problem_type.value}\n")
         file.write(f"ADAPTATION = {str(adaptation)}\n")
         file.write(f"RUN_ID = {run_id}\n")
@@ -145,7 +141,7 @@ def train_PINN(
         file.write(f"LAYERS = {params.LAYERS}\n")
         file.write(f"NEURONS = {params.NEURONS}\n")
         file.write(f"TOLERANCE = {params.TOLERANCE}")
-        file.write(f"\n")
+        file.write("\n")
         file.write(f"Time = {exec_time}\n")
         file.write(f"Iterations = {n_iters+1}\n")
 

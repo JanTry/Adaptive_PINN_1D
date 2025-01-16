@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+
 def get_mesh(x, x_ini, x_fin, reorder=True):
     local_x = F.pad(x, pad=(0, 1), mode="constant", value=x_ini)
     local_x = F.pad(local_x, pad=(0, 1), mode="constant", value=x_fin)
