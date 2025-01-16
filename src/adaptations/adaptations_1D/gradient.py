@@ -1,8 +1,9 @@
-from typing import Callable
 from math import sqrt
+from typing import Callable
+
 import torch
-from src.adaptations.adaptation_interface import AdaptationInterface
-from src.adaptations.de import mirror_bounds
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.de import mirror_bounds
 
 
 class GradientDescentAdaptation(AdaptationInterface):
@@ -48,9 +49,7 @@ class LangevinAdaptation(AdaptationInterface):
         x = (
             x
             + self.tau / 2 * residual_gradient_values.reshape(-1, 1)
-            + self.beta
-            * sqrt(self.tau)
-            * torch.randn(x.shape[1], device=x.device, dtype=x.dtype)
+            + self.beta * sqrt(self.tau) * torch.randn(x.shape[1], device=x.device, dtype=x.dtype)
         )
         x = mirror_bounds(x, self.x_range[0], self.x_range[1])
         refined_x = torch.cat([old_x[0:1], x, old_x[-1:]]).sort()[0]

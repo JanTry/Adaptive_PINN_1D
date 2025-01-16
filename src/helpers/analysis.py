@@ -1,9 +1,9 @@
 import os
 
 import pandas as pd
-import src.params.params as params
+import src.params.params_1D as params
 import torch
-from src.adaptations import (
+from src.adaptations.adaptations_1D import (
     DEAdaptation,
     DensitySamplingAdaptation,
     HMSAdaptation,
@@ -13,9 +13,9 @@ from src.adaptations import (
     RandomSearchWithSelection,
     SelectionMethod,
 )
-from src.adaptations.adaptation_interface import AdaptationInterface
-from src.enums.problems import EProblems
-from src.plots import N_ITERS_FILE, TIME_FILE
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.enums.problems import Problems1D
+from src.plots.plots_1D import N_ITERS_FILE, TIME_FILE
 
 ALL_ADAPTATIONS = [
     NoAdaptation(),
@@ -29,9 +29,9 @@ ALL_ADAPTATIONS = [
 ]
 
 
-def get_path(problem_type: EProblems, adaptation: AdaptationInterface) -> str:
+def get_path(problem_type: Problems1D, adaptation: AdaptationInterface) -> str:
     return os.path.join(
-        "results",
+        "results_1D",
         problem_type.value,
         str(adaptation),
         f"L{params.LAYERS}_N{params.NEURONS}_" f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
@@ -44,7 +44,7 @@ def extract_df_from_results(
 ) -> pd.DataFrame:
     all_rows = []
 
-    for problem_type in EProblems:
+    for problem_type in Problems1D:
         for adaptation in adaptations:
             try:
                 path = get_path(problem_type, adaptation)

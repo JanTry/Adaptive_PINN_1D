@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
 import torch
-from src.base.pinn_core import PINN
+from src.base.pinn_1D_core import PINN_1D
 
 
-class ProblemInterface(ABC):
+class ProblemInterface1D(ABC):
     @abstractmethod
     def __init__(self):
         """
@@ -29,7 +29,7 @@ class ProblemInterface(ABC):
         pass
 
     @abstractmethod
-    def f_inner_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
+    def f_inner_loss(self, x: torch.Tensor, pinn: PINN_1D) -> torch.Tensor:
         """
         Calculation of loss function for points that are not on the boundary
         :param x: list of x locations of points
@@ -39,7 +39,7 @@ class ProblemInterface(ABC):
         pass
 
     @abstractmethod
-    def compute_loss(self, x: torch.Tensor, pinn: PINN) -> torch.Tensor:
+    def compute_loss(self, x: torch.Tensor, pinn: PINN_1D) -> torch.Tensor:
         """
         Calculate final loss for all x elements
         Check the final line for the formula

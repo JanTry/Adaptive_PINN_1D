@@ -3,7 +3,7 @@ from typing import Callable
 import torch
 
 
-def exit_criterion(base_x: torch.Tensor, loss_fun: Callable, tol: float):
+def exit_criterion_1D(base_x: torch.Tensor, loss_fun: Callable, tol: float):
     x = base_x.detach().clone().requires_grad_(True)
 
     for x1, x2 in zip(x[:-1], x[1:]):

@@ -1,7 +1,7 @@
 from typing import Callable
 
 import torch
-from src.adaptations.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
 
 DEFAULT_R3_MAX_ITERATIONS = 1
 

@@ -1,8 +1,8 @@
 from typing import Callable
 
 import torch
-from src.adaptations.adaptation_interface import AdaptationInterface
-from src.adaptations.de import mirror_bounds
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.de import mirror_bounds
 
 
 class MetropolisHastingsAdaptation(AdaptationInterface):
