@@ -8,8 +8,8 @@ import torch
 class AdaptationInterface2D(ABC):
     def __init__(self):
         # Problem details:
-        self.x_range: tuple[float, float] | None = None
-        self.y_range: tuple[float, float] | None = None
+        self.x_range: torch.Tensor | None = None
+        self.y_range: torch.Tensor | None = None
         self.base_points_x: torch.Tensor | None = None
         self.base_points_y: torch.Tensor | None = None
         self.max_number_of_points: int | None = None
@@ -21,8 +21,8 @@ class AdaptationInterface2D(ABC):
 
     def set_problem_details(
         self,
-        x_range: tuple[float, float],
-        y_range: tuple[float, float],
+        x_range: torch.Tensor,
+        y_range: torch.Tensor,
         base_points_x: torch.Tensor,
         base_points_y: torch.Tensor,
         max_number_of_points: int,

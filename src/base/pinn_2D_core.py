@@ -60,14 +60,14 @@ def df(output_tensor: torch.Tensor, input_tensor: torch.Tensor, order: int = 1) 
     return df_value
 
 
-def dfdx(nn_approximator: PINN_2D, x: torch.Tensor, y: torch.Tensor, order: int = 1):
+def dfdx(pinn: PINN_2D, x: torch.Tensor, y: torch.Tensor, order: int = 1):
     """Derivative with respect to the spatial variable of arbitrary order"""
-    f_value = f(nn_approximator, x, y)
+    f_value = f(pinn, x, y)
     return df(f_value, x, order=order)
 
 
-def dfdy(nn_approximator: PINN_2D, x: torch.Tensor, y: torch.Tensor, order: int = 1):
-    f_value = f(nn_approximator, x, y)
+def dfdy(pinn: PINN_2D, x: torch.Tensor, y: torch.Tensor, order: int = 1):
+    f_value = f(pinn, x, y)
     return df(f_value, y, order=order)
 
 
@@ -85,7 +85,7 @@ def train_model(
     convergence_data = torch.empty(max_epochs, device=device)
 
     for epoch in range(max_epochs):
-        loss = loss_fn(nn_approximator=nn_approximator)
+        loss = loss_fn(pinn=nn_approximator)
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
         optimizer.step()

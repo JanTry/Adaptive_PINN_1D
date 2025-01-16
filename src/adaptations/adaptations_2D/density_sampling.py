@@ -8,22 +8,33 @@ from src.helpers.separate_boundary_points_2D import separate_boundary_points_2D
 class DensitySamplingAdaptation2D(AdaptationInterface2D):
     def __init__(
         self,
-        x_range,
-        y_range,
-        base_points_x: torch.Tensor,
-        base_points_y,
-        max_number_of_points,
-        buckets_number_range=10,
     ):
+        self.device = None
+        self.x_bkt_range = None
+        self.y_bkt_range = None
+        self.points_count_per_bucket = None
+        self.boundary_x = None
+        self.boundary_y = None
+
+        self.buckets_number_range = 16
         super().__init__()
+
+    def set_problem_details(
+        self,
+        x_range: torch.Tensor,
+        y_range: torch.Tensor,
+        base_points_x: torch.Tensor,
+        base_points_y: torch.Tensor,
+        max_number_of_points: int,
+    ):
         self.device = base_points_x.device
         self.x_bkt_range = (
-            torch.linspace(x_range[0], x_range[1], buckets_number_range + 1).requires_grad_(True).to(self.device)
+            torch.linspace(x_range[0], x_range[1], self.buckets_number_range + 1).requires_grad_(True).to(self.device)
         )
         self.y_bkt_range = (
-            torch.linspace(y_range[0], y_range[1], buckets_number_range + 1).requires_grad_(True).to(self.device)
+            torch.linspace(y_range[0], y_range[1], self.buckets_number_range + 1).requires_grad_(True).to(self.device)
         )
-        self.buckets_number_range = buckets_number_range
+        self.buckets_number_range = self.buckets_number_range
         self.points_count_per_bucket = None
 
         inner_x, inner_y, self.boundary_x, self.boundary_y = separate_boundary_points_2D(
