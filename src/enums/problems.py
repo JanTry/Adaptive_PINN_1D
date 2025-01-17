@@ -11,6 +11,4 @@ class Problems1D(str, Enum):
 
 class Problems2D(str, Enum):
     P07_01 = "P07_01_2D"  # (x+0.1)^0.7*(y+0.1)^0.7
-    TAN_03 = "tan_03_2D"  # tan(x-0.3)*tan(y-0.3)
-    TAN_04 = "tan_04_2D"  # tan(x-0.4)*tan(y-0.4)
     TAN_05 = "tan_05_2D"  # tan(x-0.5)*tan(y-0.5)

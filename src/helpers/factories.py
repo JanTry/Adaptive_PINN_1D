@@ -5,6 +5,7 @@ from src.problems.problems_1D.p07_01 import P0701Problem1D
 from src.problems.problems_1D.tan_01 import Tan01Problem1D
 from src.problems.problems_1D.tan_03 import Tan03Problem1D
 from src.problems.problems_2D.p07_01_2D import P0701Problem2D
+from src.problems.problems_2D.tan_05_2D import Tan05Problem2D
 
 
 def problem_factory_1D(problem: Problems1D):
@@ -21,9 +22,7 @@ def problem_factory_1D(problem: Problems1D):
 
 def problem_factory_2D(problem: Problems2D):
     problem_classes = {
-        # Problems2D.TAN_03: Tan01Problem2D,  // TODO -> re-enable after adding
-        # Problems2D.TAN_04: Tan04Problem2D,
-        # Problems2D.TAN_05: Tan05Problem2D,
+        Problems2D.TAN_05: Tan05Problem2D,
         Problems2D.P07_01: P0701Problem2D,
     }
 
