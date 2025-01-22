@@ -21,7 +21,7 @@ class Tan05Problem2D(ProblemInterface2D):
         return (
             dfdx(pinn, x, y, order=2)
             + dfdy(pinn, x, y, order=2)
-            + 2 * tan(x - 0.5) * tan(y - 0.5) * (1 / pow(cos(x - 0.5), 2) + 1 / pow(cos(y - 0.5), 2))
+            - 2 * tan(x - 0.5) * tan(y - 0.5) * (1 / pow(cos(x - 0.5), 2) + 1 / pow(cos(y - 0.5), 2))
         )
 
     def __f_boundary_loss_mean(self, x, y, pinn):
