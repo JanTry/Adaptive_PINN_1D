@@ -1,37 +1,37 @@
 import os
 
 import pandas as pd
-import src.params.params as params
+import src.params.params_1D as params
 import torch
-from src.adaptations import (
-    DEAdaptation,
-    DensitySamplingAdaptation,
-    HMSAdaptation,
-    MiddlePointAdaptation,
-    NoAdaptation,
-    R3Adaptation,
+from src.adaptations.adaptations_1D import (
+    DEAdaptation1D,
+    DensitySamplingAdaptation1D,
+    HMSAdaptation1D,
+    MiddlePointAdaptation1D,
+    NoAdaptation1D,
+    R3Adaptation1D,
     RandomSearchWithSelection,
     SelectionMethod,
 )
-from src.adaptations.adaptation_interface import AdaptationInterface
-from src.enums.problems import EProblems
-from src.plots import N_ITERS_FILE, TIME_FILE
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
+from src.enums.problems import Problems1D
+from src.plots.plots_1D import N_ITERS_FILE, TIME_FILE
 
 ALL_ADAPTATIONS = [
-    NoAdaptation(),
-    MiddlePointAdaptation(),
-    DensitySamplingAdaptation(),
-    R3Adaptation(),
-    HMSAdaptation(),
-    DEAdaptation(),
+    NoAdaptation1D(),
+    MiddlePointAdaptation1D(),
+    DensitySamplingAdaptation1D(),
+    R3Adaptation1D(),
+    HMSAdaptation1D(),
+    DEAdaptation1D(),
     RandomSearchWithSelection(selection_method=SelectionMethod.ROULETTE),
     RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
 ]
 
 
-def get_path(problem_type: EProblems, adaptation: AdaptationInterface) -> str:
+def get_path(problem_type: Problems1D, adaptation: AdaptationInterface1D) -> str:
     return os.path.join(
-        "results",
+        "results_1D",
         problem_type.value,
         str(adaptation),
         f"L{params.LAYERS}_N{params.NEURONS}_" f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
@@ -40,11 +40,11 @@ def get_path(problem_type: EProblems, adaptation: AdaptationInterface) -> str:
 
 
 def extract_df_from_results(
-    adaptations: list[AdaptationInterface] = ALL_ADAPTATIONS,
+    adaptations: list[AdaptationInterface1D] = ALL_ADAPTATIONS,
 ) -> pd.DataFrame:
     all_rows = []
 
-    for problem_type in EProblems:
+    for problem_type in Problems1D:
         for adaptation in adaptations:
             try:
                 path = get_path(problem_type, adaptation)

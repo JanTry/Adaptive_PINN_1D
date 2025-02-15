@@ -3,28 +3,28 @@ import os
 import time
 from functools import partial
 
-import src.params.params as params
+import src.params.params_1D as params
 import torch
-from src.adaptations.adaptation_interface import AdaptationInterface
-from src.base.exit_criterion import exit_criterion
-from src.base.pinn_core import PINN, f, train_model
-from src.enums.problems import EProblems
-from src.helpers.factories import problem_factory
-from src.plots.plot_specific_run import CONVERGENCE_FILE, N_ITERS_FILE, PINN_FILE, POINT_DATA_FILE, TIME_FILE
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
+from src.base.exit_criterion import exit_criterion_1D
+from src.base.pinn_1D_core import PINN_1D, f, train_model
+from src.enums.problems import Problems1D
+from src.helpers.factories import problem_factory_1D
+from src.plots.plots_1D.plot_specific_run import CONVERGENCE_FILE, N_ITERS_FILE, PINN_FILE, POINT_DATA_FILE, TIME_FILE
 
 
-def train_PINN(
+def train_PINN_1D(
     run_id: int,
-    adaptation: AdaptationInterface,
-    problem_type: EProblems = params.PROBLEM,
+    adaptation: AdaptationInterface1D,
+    problem_type: Problems1D = params.PROBLEM,
     save_training_data: bool = True,
 ):
     """
-    Basic 1D PINN training based on src/params/params.py file
+    Basic 1D PINN training based on src/params/params_1D.py file
 
     :param run_id: run identification number. Will overwrite any previous result with the same id and save path params
     :param problem_type: problem enum value. Based on that, a proper class from src/problems will be used
-    :param adaptation_type: adaptation enum value. Based on that, a proper class from src/adaptations will be used
+    :param adaptation: adaptation
     :param save_training_data: Either save the mid-run selected points or not (results for the run are always saved)
     :return:
     """
@@ -33,7 +33,7 @@ def train_PINN(
         f"Starting PINN training run {run_id} for: {problem_type.value}, {str(adaptation)}",
     )
 
-    problem = problem_factory(problem=problem_type)
+    problem = problem_factory_1D(problem=problem_type)
 
     x_range = problem.get_range()
 
@@ -56,7 +56,7 @@ def train_PINN(
         max_number_of_points=params.NUM_MAX_POINTS,
     )
 
-    pinn = PINN(params.LAYERS, params.NEURONS, pinning=False).to(params.DEVICE)
+    pinn = PINN_1D(params.LAYERS, params.NEURONS, pinning=False).to(params.DEVICE)
     convergence_data = torch.empty(0)
     point_data = []
     n_iters = -1
@@ -87,7 +87,7 @@ def train_PINN(
 
         loss_fn = partial(problem.f_inner_loss, pinn=pinn)
 
-        if exit_criterion(test_x, loss_fn, params.TOLERANCE):
+        if exit_criterion_1D(test_x, loss_fn, params.TOLERANCE):
             break
 
         x = adaptation.refine(loss_function=loss_fn, old_x=x)
@@ -109,7 +109,7 @@ def train_PINN(
 
     # Saving results
     base_path = os.path.join(
-        "results",
+        "results_1D",
         problem_type.value,
         str(adaptation),
         f"L{params.LAYERS}_N{params.NEURONS}_" f"P{params.NUM_MAX_POINTS}_E{params.NUMBER_EPOCHS}",
@@ -146,4 +146,4 @@ def train_PINN(
         file.write(f"Iterations = {n_iters+1}\n")
 
     with open(f"{base_path}/stability.txt", "a") as stability_results_file:
-        stability_results_file.write(f"{run_id};{n_iters + 1};{exec_time}\n")
+        stability_results_file.write(f"{run_id};{n_iters + 1};{exec_time}\n")  # noqa: E231, E702

@@ -8,7 +8,7 @@ import torch
 from torch import nn
 
 
-class PINN(nn.Module):
+class PINN_1D(nn.Module):
     """Simple neural network accepting two features as input and returning a single output
 
     In the context of PINNs, the neural network is used as universal function approximator
@@ -42,7 +42,7 @@ class PINN(nn.Module):
         return logits
 
 
-def f(nn_approximator: PINN, x: torch.Tensor) -> torch.Tensor:
+def f(nn_approximator: PINN_1D, x: torch.Tensor) -> torch.Tensor:
     """Compute the value of the approximate solution from the NN model"""
     return nn_approximator(x)
 
@@ -62,14 +62,14 @@ def df(output: torch.Tensor, input: torch.Tensor, order: int = 1) -> torch.Tenso
     return df_value
 
 
-def dfdx(nn_approximator: PINN, x: torch.Tensor, order: int = 1):
+def dfdx(nn_approximator: PINN_1D, x: torch.Tensor, order: int = 1):
     """Derivative with respect to the spatial variable of arbitrary order"""
     f_value = f(nn_approximator, x)
     return df(f_value, x, order=order)
 
 
 def train_model(
-    nn_approximator: PINN,
+    nn_approximator: PINN_1D,
     loss_fn: Callable,
     device,
     learning_rate: float = 0.01,

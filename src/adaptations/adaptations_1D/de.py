@@ -1,7 +1,7 @@
 from typing import Callable
 
 import torch
-from src.adaptations.adaptation_interface import AdaptationInterface
+from src.adaptations.adaptations_1D.adaptation_interface import AdaptationInterface1D
 
 DEFAULT_DE_MAX_ITERATIONS = 1
 DEFAULT_DE_F = 0.8
@@ -21,7 +21,7 @@ def mirror_bounds(x: torch.Tensor, lower: float, upper: float) -> torch.Tensor:
     return mirrored + lower
 
 
-class DEAdaptation(AdaptationInterface):
+class DEAdaptation1D(AdaptationInterface1D):
     def __init__(
         self,
         max_iterations: int = DEFAULT_DE_MAX_ITERATIONS,
@@ -74,7 +74,7 @@ class DEAdaptation(AdaptationInterface):
         return "de" if self.max_iterations == DEFAULT_DE_MAX_ITERATIONS else f"de_{self.max_iterations}"
 
 
-class StaticDEAdaptation(AdaptationInterface):
+class StaticDEAdaptation1D(AdaptationInterface1D):
     def __init__(
         self,
         max_iterations: int = DEFAULT_DE_MAX_ITERATIONS,

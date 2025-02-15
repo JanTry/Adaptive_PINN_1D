@@ -2,10 +2,10 @@ import logging
 import sys
 
 import torch
-from src.enums.problems import EProblems
+from src.enums.problems import Problems1D
 
 # Used only if not specified in the PINN training run
-PROBLEM = EProblems.DIFFUSION
+PROBLEM = Problems1D.DIFFUSION
 
 # Collocation points limits
 NUM_MAX_POINTS = 200  # DEF 200
