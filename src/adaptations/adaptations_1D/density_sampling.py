@@ -58,15 +58,17 @@ class DensitySamplingAdaptation1D(AdaptationInterface1D):
         points = torch.tensor(self.x_range, dtype=torch.float, device=mesh_points.device)
 
         for i in range(torch.numel(points_per_element)):
-            x1, x2 = mesh_points[i], mesh_points[i + 1]
+            if points_per_element[i] != 0:
+                x1, x2 = mesh_points[i], mesh_points[i + 1]
+                new_ten = (x2 - x1) * torch.rand(points_per_element[i], device=mesh_points.device) + x1
 
-            new_ten = torch.tensor((points_per_element[i], 1), dtype=torch.float, device=mesh_points.device).uniform_(
-                x1.item(), x2.item()
-            )
-
-            points = torch.cat((points, new_ten))
+                points = torch.cat((points, new_ten))
         points = points.sort()[0]
-
+        if list(points.size())[0] != self.max_number_of_points:
+            raise RuntimeError(
+                f"The number of points is invalid. Expected: {self.max_number_of_points}, \
+                actual: {list(points.size())[0]}"
+            )
         return points.reshape(-1, 1).detach().clone().requires_grad_(True)
 
     def __str__(self) -> str:
