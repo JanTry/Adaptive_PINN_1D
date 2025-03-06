@@ -1,12 +1,14 @@
-from .de import DEAdaptation
+from .cma_es import CMAAdaptation
+from .de import DEAdaptation, GBDEAdaptation, SHADEAdaptation, StaticDEAdaptation
 from .density_sampling import DensitySamplingAdaptation
+from .ga import GAAdaptation
+from .gradient import GradientDescentAdaptation, LangevinAdaptation
 from .hms import HMSAdaptation
 from .middle_point import MiddlePointAdaptation
 from .no_adaptation import NoAdaptation
+from .pso import PSOAdaptation
 from .r3 import R3Adaptation
-from .random import RandomSearchWithSelection, SelectionMethod, RandomRAdaptation
-from .gradient import LangevinAdaptation, GradientDescentAdaptation
-from .mcmc import MetropolisHastingsAdaptation
+from .random import RandomRAdaptation, RandomSearchWithSelection, SelectionMethod
 
 __all__ = [
     "DEAdaptation",
@@ -20,5 +22,6 @@ __all__ = [
     "RandomRAdaptation",
     "LangevinAdaptation",
     "GradientDescentAdaptation",
-    "MetropolisHastingsAdaptation",
+    "GAAdaptation",
+    "SHADEAdaptation",
 ]

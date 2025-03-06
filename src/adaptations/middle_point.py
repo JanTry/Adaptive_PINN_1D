@@ -26,7 +26,7 @@ class MiddlePointAdaptation(AdaptationInterface):
                 if el_loss > params.TOLERANCE:
                     refined = True
                     new_points.append((x1 + x2) / 2.0)
-            x = torch.cat((x, torch.tensor(new_points, device=x.device))).sort()[0]
+            x = torch.cat((x, torch.tensor(new_points, device=x.device))).sort(dim=0)[0]
             n_points = x.numel()
         return x.reshape(-1, 1).detach().clone().requires_grad_(True)
 

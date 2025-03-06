@@ -83,7 +83,8 @@ def train_PINN(
         if save_training_data:
             y = f(pinn, x).detach().cpu()
             plain_x = x.detach().clone().cpu()
-            point_data.append(torch.stack((plain_x, y)).transpose(1, 0).reshape(-1, 2))
+            y_residual = problem.f_inner_loss(pinn=pinn, x=x).abs().detach().clone().cpu()
+            point_data.append(torch.stack((plain_x, y, y_residual)).transpose(1, 0).reshape(-1, 3))
 
         loss_fn = partial(problem.f_inner_loss, pinn=pinn)
 
@@ -104,7 +105,7 @@ def train_PINN(
     logging.log(
         logging.INFO,
         f"Adaptation: {str(adaptation)}, Problem: {problem_type.value}, Run: {run_id}, "
-        f"Finished in {n_iters+1} iterations, after {exec_time}s",
+        f"Finished in {n_iters+1} iterations, after {exec_time}s, avg time per iter: {exec_time/(n_iters+1)}s",
     )
 
     # Saving results

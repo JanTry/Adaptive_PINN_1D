@@ -6,24 +6,37 @@ import torch
 from src.adaptations import (
     DEAdaptation,
     DensitySamplingAdaptation,
+    GAAdaptation,
+    GBDEAdaptation,
+    GradientDescentAdaptation,
     HMSAdaptation,
+    LangevinAdaptation,
     MiddlePointAdaptation,
     NoAdaptation,
     R3Adaptation,
+    RandomRAdaptation,
     RandomSearchWithSelection,
     SelectionMethod,
+    SHADEAdaptation,
 )
 from src.adaptations.adaptation_interface import AdaptationInterface
 from src.enums.problems import EProblems
-from src.plots import N_ITERS_FILE, TIME_FILE
+from src.plots.plot_specific_run import N_ITERS_FILE, TIME_FILE
 
 ALL_ADAPTATIONS = [
+    GAAdaptation(elitism_rate=0.1),
+    GAAdaptation(max_iterations=5, elitism_rate=0.1),
+    GradientDescentAdaptation(),
+    LangevinAdaptation(),
+    RandomRAdaptation(),
     NoAdaptation(),
     MiddlePointAdaptation(),
     DensitySamplingAdaptation(),
     R3Adaptation(),
     HMSAdaptation(),
     DEAdaptation(),
+    SHADEAdaptation(),
+    GBDEAdaptation(),
     RandomSearchWithSelection(selection_method=SelectionMethod.ROULETTE),
     RandomSearchWithSelection(selection_method=SelectionMethod.TOURNAMENT),
 ]
